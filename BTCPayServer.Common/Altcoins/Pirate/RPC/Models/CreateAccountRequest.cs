@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace BTCPayServer.Services.Altcoins.Monero.RPC.Models
+namespace BTCPayServer.Services.Altcoins.Pirate.RPC.Models
 {
     public partial class CreateAccountRequest
     {
