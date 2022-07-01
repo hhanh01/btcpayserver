@@ -4,33 +4,33 @@ using System.Linq;
 using BTCPayServer.Abstractions.Contracts;
 using BTCPayServer.Client.Models;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Services
+namespace BTCPayServer.Services.Altcoins.Pirate.Services
 {
-    public class MoneroSyncSummaryProvider : ISyncSummaryProvider
+    public class PirateSyncSummaryProvider : ISyncSummaryProvider
     {
-        private readonly MoneroRPCProvider _moneroRpcProvider;
+        private readonly PirateRPCProvider _pirateRpcProvider;
 
-        public MoneroSyncSummaryProvider(MoneroRPCProvider moneroRpcProvider)
+        public PirateSyncSummaryProvider(PirateRPCProvider pirateRpcProvider)
         {
-            _moneroRpcProvider = moneroRpcProvider;
+            _pirateRpcProvider = pirateRpcProvider;
         }
 
         public bool AllAvailable()
         {
-            return _moneroRpcProvider.Summaries.All(pair => pair.Value.WalletAvailable);
+            return _pirateRpcProvider.Summaries.All(pair => pair.Value.WalletAvailable);
         }
 
-        public string Partial { get; } = "Monero/MoneroSyncSummary";
+        public string Partial { get; } = "Pirate/PirateSyncSummary";
         public IEnumerable<ISyncStatus> GetStatuses()
         {
-            return _moneroRpcProvider.Summaries.Select(pair => new MoneroSyncStatus()
+            return _pirateRpcProvider.Summaries.Select(pair => new PirateSyncStatus()
             {
                 Summary = pair.Value, CryptoCode = pair.Key
             });
         }
     }
 
-    public class MoneroSyncStatus: SyncStatus, ISyncStatus
+    public class PirateSyncStatus: SyncStatus, ISyncStatus
     {
         public override bool Available
         {
@@ -40,7 +40,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.Services
             }
         }
 
-        public MoneroRPCProvider.MoneroLikeSummary Summary { get; set; }
+        public PirateRPCProvider.PirateLikeSummary Summary { get; set; }
     }
 }
 #endif

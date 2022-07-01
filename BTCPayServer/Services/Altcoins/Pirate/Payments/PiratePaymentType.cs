@@ -6,22 +6,22 @@ using NBitcoin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Payments
+namespace BTCPayServer.Services.Altcoins.Pirate.Payments
 {
-    public class MoneroPaymentType : PaymentType
+    public class PiratePaymentType : PaymentType
     {
-        public static MoneroPaymentType Instance { get; } = new MoneroPaymentType();
+        public static PiratePaymentType Instance { get; } = new PiratePaymentType();
         public override string ToPrettyString() => "On-Chain";
 
-        public override string GetId() => "MoneroLike";
+        public override string GetId() => "PirateLike";
         public override string ToStringNormalized()
         {
-            return "Monero";
+            return "Pirate";
         }
 
         public override CryptoPaymentData DeserializePaymentData(BTCPayNetworkBase network, string str)
         {
-            return JsonConvert.DeserializeObject<MoneroLikePaymentData>(str);
+            return JsonConvert.DeserializeObject<PirateLikePaymentData>(str);
         }
 
         public override string SerializePaymentData(BTCPayNetworkBase network, CryptoPaymentData paymentData)
@@ -31,7 +31,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.Payments
 
         public override IPaymentMethodDetails DeserializePaymentMethodDetails(BTCPayNetworkBase network, string str)
         {
-            return JsonConvert.DeserializeObject<MoneroLikeOnChainPaymentMethodDetails>(str);
+            return JsonConvert.DeserializeObject<PirateLikeOnChainPaymentMethodDetails>(str);
         }
 
         public override string SerializePaymentMethodDetails(BTCPayNetworkBase network, IPaymentMethodDetails details)
@@ -41,7 +41,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.Payments
 
         public override ISupportedPaymentMethod DeserializeSupportedPaymentMethod(BTCPayNetworkBase network, JToken value)
         {
-            return JsonConvert.DeserializeObject<MoneroSupportedPaymentMethod>(value.ToString());
+            return JsonConvert.DeserializeObject<PirateSupportedPaymentMethod>(value.ToString());
         }
 
         public override string GetTransactionLink(BTCPayNetworkBase network, string txId)
@@ -52,18 +52,18 @@ namespace BTCPayServer.Services.Altcoins.Monero.Payments
         public override string GetPaymentLink(BTCPayNetworkBase network, IPaymentMethodDetails paymentMethodDetails, Money cryptoInfoDue, string serverUri)
         {
             return paymentMethodDetails.Activated
-                ? $"{(network as MoneroLikeSpecificBtcPayNetwork).UriScheme}:{paymentMethodDetails.GetPaymentDestination()}?tx_amount={cryptoInfoDue.ToDecimal(MoneyUnit.BTC)}"
+                ? $"{(network as PirateLikeSpecificBtcPayNetwork).UriScheme}:{paymentMethodDetails.GetPaymentDestination()}?tx_amount={cryptoInfoDue.ToDecimal(MoneyUnit.BTC)}"
                 : string.Empty;
         }
 
-        public override string InvoiceViewPaymentPartialName { get; } = "Monero/ViewMoneroLikePaymentData";
+        public override string InvoiceViewPaymentPartialName { get; } = "Pirate/ViewPirateLikePaymentData";
         public override object GetGreenfieldData(ISupportedPaymentMethod supportedPaymentMethod, bool canModifyStore)
         {
-            if (supportedPaymentMethod is MoneroSupportedPaymentMethod moneroSupportedPaymentMethod)
+            if (supportedPaymentMethod is PirateSupportedPaymentMethod pirateSupportedPaymentMethod)
             {
                 return new
                 {
-                    moneroSupportedPaymentMethod.AccountIndex,
+                    pirateSupportedPaymentMethod.AccountIndex,
                 };
             }
 

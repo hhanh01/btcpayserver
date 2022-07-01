@@ -1,7 +1,7 @@
 #if ALTCOINS
-namespace BTCPayServer.Services.Altcoins.Monero.RPC
+namespace BTCPayServer.Services.Altcoins.Pirate.RPC
 {
-    public class MoneroEvent
+    public class PirateEvent
     {
         public string BlockHash { get; set; }
         public string TransactionHash { get; set; }

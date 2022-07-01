@@ -1,9 +1,9 @@
 #if ALTCOINS
 using System;
 
-namespace BTCPayServer.Services.Altcoins.Monero.UI
+namespace BTCPayServer.Services.Altcoins.Pirate.UI
 {
-    public class MoneroPaymentViewModel
+    public class PiratePaymentViewModel
     {
         public string Crypto { get; set; }
         public string Confirmations { get; set; }

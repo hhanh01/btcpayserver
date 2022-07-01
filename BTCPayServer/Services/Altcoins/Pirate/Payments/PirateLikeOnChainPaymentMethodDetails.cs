@@ -1,13 +1,13 @@
 #if ALTCOINS
 using BTCPayServer.Payments;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Payments
+namespace BTCPayServer.Services.Altcoins.Pirate.Payments
 {
-    public class MoneroLikeOnChainPaymentMethodDetails : IPaymentMethodDetails
+    public class PirateLikeOnChainPaymentMethodDetails : IPaymentMethodDetails
     {
         public PaymentType GetPaymentType()
         {
-            return MoneroPaymentType.Instance;
+            return PiratePaymentType.Instance;
         }
 
         public string GetPaymentDestination()

@@ -4,34 +4,34 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BTCPayServer.Services.Altcoins.Monero.Configuration;
-using BTCPayServer.Services.Altcoins.Monero.RPC;
-using BTCPayServer.Services.Altcoins.Monero.RPC.Models;
+using BTCPayServer.Services.Altcoins.Pirate.Configuration;
+using BTCPayServer.Services.Altcoins.Pirate.RPC;
+using BTCPayServer.Services.Altcoins.Pirate.RPC.Models;
 using NBitcoin;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Services
+namespace BTCPayServer.Services.Altcoins.Pirate.Services
 {
-    public class MoneroRPCProvider
+    public class PirateRPCProvider
     {
-        private readonly MoneroLikeConfiguration _moneroLikeConfiguration;
+        private readonly PirateLikeConfiguration _pirateLikeConfiguration;
         private readonly EventAggregator _eventAggregator;
         public ImmutableDictionary<string, JsonRpcClient> DaemonRpcClients;
         public ImmutableDictionary<string, JsonRpcClient> WalletRpcClients;
 
-        private readonly ConcurrentDictionary<string, MoneroLikeSummary> _summaries =
-            new ConcurrentDictionary<string, MoneroLikeSummary>();
+        private readonly ConcurrentDictionary<string, PirateLikeSummary> _summaries =
+            new ConcurrentDictionary<string, PirateLikeSummary>();
 
-        public ConcurrentDictionary<string, MoneroLikeSummary> Summaries => _summaries;
+        public ConcurrentDictionary<string, PirateLikeSummary> Summaries => _summaries;
 
-        public MoneroRPCProvider(MoneroLikeConfiguration moneroLikeConfiguration, EventAggregator eventAggregator, IHttpClientFactory httpClientFactory)
+        public PirateRPCProvider(PirateLikeConfiguration pirateLikeConfiguration, EventAggregator eventAggregator, IHttpClientFactory httpClientFactory)
         {
-            _moneroLikeConfiguration = moneroLikeConfiguration;
+            _pirateLikeConfiguration = pirateLikeConfiguration;
             _eventAggregator = eventAggregator;
             DaemonRpcClients =
-                _moneroLikeConfiguration.MoneroLikeConfigurationItems.ToImmutableDictionary(pair => pair.Key,
+                _pirateLikeConfiguration.PirateLikeConfigurationItems.ToImmutableDictionary(pair => pair.Key,
                     pair => new JsonRpcClient(pair.Value.DaemonRpcUri, "", "", httpClientFactory.CreateClient()));
             WalletRpcClients =
-                _moneroLikeConfiguration.MoneroLikeConfigurationItems.ToImmutableDictionary(pair => pair.Key,
+                _pirateLikeConfiguration.PirateLikeConfigurationItems.ToImmutableDictionary(pair => pair.Key,
                     pair => new JsonRpcClient(pair.Value.InternalWalletRpcUri, "", "", httpClientFactory.CreateClient()));
         }
 
@@ -41,13 +41,13 @@ namespace BTCPayServer.Services.Altcoins.Monero.Services
             return _summaries.ContainsKey(cryptoCode) && IsAvailable(_summaries[cryptoCode]);
         }
 
-        private bool IsAvailable(MoneroLikeSummary summary)
+        private bool IsAvailable(PirateLikeSummary summary)
         {
             return summary.Synced &&
                    summary.WalletAvailable;
         }
 
-        public async Task<MoneroLikeSummary> UpdateSummary(string cryptoCode)
+        public async Task<PirateLikeSummary> UpdateSummary(string cryptoCode)
         {
             if (!DaemonRpcClients.TryGetValue(cryptoCode.ToUpperInvariant(), out var daemonRpcClient) ||
                 !WalletRpcClients.TryGetValue(cryptoCode.ToUpperInvariant(), out var walletRpcClient))
@@ -55,7 +55,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.Services
                 return null;
             }
 
-            var summary = new MoneroLikeSummary();
+            var summary = new PirateLikeSummary();
             try
             {
                 var daemonResult =
@@ -92,20 +92,20 @@ namespace BTCPayServer.Services.Altcoins.Monero.Services
             _summaries.AddOrReplace(cryptoCode, summary);
             if (changed)
             {
-                _eventAggregator.Publish(new MoneroDaemonStateChange() { Summary = summary, CryptoCode = cryptoCode });
+                _eventAggregator.Publish(new PirateDaemonStateChange() { Summary = summary, CryptoCode = cryptoCode });
             }
 
             return summary;
         }
 
 
-        public class MoneroDaemonStateChange
+        public class PirateDaemonStateChange
         {
             public string CryptoCode { get; set; }
-            public MoneroLikeSummary Summary { get; set; }
+            public PirateLikeSummary Summary { get; set; }
         }
 
-        public class MoneroLikeSummary
+        public class PirateLikeSummary
         {
             public bool Synced { get; set; }
             public long CurrentHeight { get; set; }

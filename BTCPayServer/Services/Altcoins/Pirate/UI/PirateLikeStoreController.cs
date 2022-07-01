@@ -16,58 +16,58 @@ using BTCPayServer.Filters;
 using BTCPayServer.Models;
 using BTCPayServer.Payments;
 using BTCPayServer.Security;
-using BTCPayServer.Services.Altcoins.Monero.Configuration;
-using BTCPayServer.Services.Altcoins.Monero.Payments;
-using BTCPayServer.Services.Altcoins.Monero.RPC.Models;
-using BTCPayServer.Services.Altcoins.Monero.Services;
+using BTCPayServer.Services.Altcoins.Pirate.Configuration;
+using BTCPayServer.Services.Altcoins.Pirate.Payments;
+using BTCPayServer.Services.Altcoins.Pirate.RPC.Models;
+using BTCPayServer.Services.Altcoins.Pirate.Services;
 using BTCPayServer.Services.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace BTCPayServer.Services.Altcoins.Monero.UI
+namespace BTCPayServer.Services.Altcoins.Pirate.UI
 {
-    [Route("stores/{storeId}/monerolike")]
-    [OnlyIfSupportAttribute("XMR")]
+    [Route("stores/{storeId}/piratelike")]
+    [OnlyIfSupportAttribute("ARRR")]
     [Authorize(AuthenticationSchemes = AuthenticationSchemes.Cookie)]
     [Authorize(Policy = Policies.CanModifyStoreSettings, AuthenticationSchemes = AuthenticationSchemes.Cookie)]
     [Authorize(Policy = Policies.CanModifyServerSettings, AuthenticationSchemes = AuthenticationSchemes.Cookie)]
-    public class UIMoneroLikeStoreController : Controller
+    public class UIPirateLikeStoreController : Controller
     {
-        private readonly MoneroLikeConfiguration _MoneroLikeConfiguration;
+        private readonly PirateLikeConfiguration _PirateLikeConfiguration;
         private readonly StoreRepository _StoreRepository;
-        private readonly MoneroRPCProvider _MoneroRpcProvider;
+        private readonly PirateRPCProvider _PirateRpcProvider;
         private readonly BTCPayNetworkProvider _BtcPayNetworkProvider;
 
-        public UIMoneroLikeStoreController(MoneroLikeConfiguration moneroLikeConfiguration,
-            StoreRepository storeRepository, MoneroRPCProvider moneroRpcProvider,
+        public UIPirateLikeStoreController(PirateLikeConfiguration pirateLikeConfiguration,
+            StoreRepository storeRepository, PirateRPCProvider pirateRpcProvider,
             BTCPayNetworkProvider btcPayNetworkProvider)
         {
-            _MoneroLikeConfiguration = moneroLikeConfiguration;
+            _PirateLikeConfiguration = pirateLikeConfiguration;
             _StoreRepository = storeRepository;
-            _MoneroRpcProvider = moneroRpcProvider;
+            _PirateRpcProvider = pirateRpcProvider;
             _BtcPayNetworkProvider = btcPayNetworkProvider;
         }
 
         public StoreData StoreData => HttpContext.GetStoreData();
 
         [HttpGet()]
-        public async Task<IActionResult> GetStoreMoneroLikePaymentMethods()
+        public async Task<IActionResult> GetStorePirateLikePaymentMethods()
         {
-            var monero = StoreData.GetSupportedPaymentMethods(_BtcPayNetworkProvider)
-                .OfType<MoneroSupportedPaymentMethod>();
+            var pirate = StoreData.GetSupportedPaymentMethods(_BtcPayNetworkProvider)
+                .OfType<PirateSupportedPaymentMethod>();
 
             var excludeFilters = StoreData.GetStoreBlob().GetExcludedPaymentMethods();
 
-            var accountsList = _MoneroLikeConfiguration.MoneroLikeConfigurationItems.ToDictionary(pair => pair.Key,
+            var accountsList = _PirateLikeConfiguration.PirateLikeConfigurationItems.ToDictionary(pair => pair.Key,
                 pair => GetAccounts(pair.Key));
 
             await Task.WhenAll(accountsList.Values);
-            return View(new MoneroLikePaymentMethodListViewModel()
+            return View(new PirateLikePaymentMethodListViewModel()
             {
-                Items = _MoneroLikeConfiguration.MoneroLikeConfigurationItems.Select(pair =>
-                    GetMoneroLikePaymentMethodViewModel(monero, pair.Key, excludeFilters,
+                Items = _PirateLikeConfiguration.PirateLikeConfigurationItems.Select(pair =>
+                    GetPirateLikePaymentMethodViewModel(pirate, pair.Key, excludeFilters,
                         accountsList[pair.Key].Result))
             });
         }
@@ -76,35 +76,35 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
         {
             try
             {
-                if (_MoneroRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary) && summary.WalletAvailable)
+                if (_PirateRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary) && summary.WalletAvailable)
                 {
 
-                    return _MoneroRpcProvider.WalletRpcClients[cryptoCode].SendCommandAsync<GetAccountsRequest, GetAccountsResponse>("get_accounts", new GetAccountsRequest());
+                    return _PirateRpcProvider.WalletRpcClients[cryptoCode].SendCommandAsync<GetAccountsRequest, GetAccountsResponse>("get_accounts", new GetAccountsRequest());
                 }
             }
             catch { }
             return Task.FromResult<GetAccountsResponse>(null);
         }
 
-        private MoneroLikePaymentMethodViewModel GetMoneroLikePaymentMethodViewModel(
-            IEnumerable<MoneroSupportedPaymentMethod> monero, string cryptoCode,
+        private PirateLikePaymentMethodViewModel GetPirateLikePaymentMethodViewModel(
+            IEnumerable<PirateSupportedPaymentMethod> pirate, string cryptoCode,
             IPaymentFilter excludeFilters, GetAccountsResponse accountsResponse)
         {
-            var settings = monero.SingleOrDefault(method => method.CryptoCode == cryptoCode);
-            _MoneroRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary);
-            _MoneroLikeConfiguration.MoneroLikeConfigurationItems.TryGetValue(cryptoCode,
+            var settings = pirate.SingleOrDefault(method => method.CryptoCode == cryptoCode);
+            _PirateRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary);
+            _PirateLikeConfiguration.PirateLikeConfigurationItems.TryGetValue(cryptoCode,
                 out var configurationItem);
             var fileAddress = Path.Combine(configurationItem.WalletDirectory, "wallet");
             var accounts = accountsResponse?.SubaddressAccounts?.Select(account =>
                 new SelectListItem(
                     $"{account.AccountIndex} - {(string.IsNullOrEmpty(account.Label) ? "No label" : account.Label)}",
                     account.AccountIndex.ToString(CultureInfo.InvariantCulture)));
-            return new MoneroLikePaymentMethodViewModel()
+            return new PirateLikePaymentMethodViewModel()
             {
                 WalletFileFound = System.IO.File.Exists(fileAddress),
                 Enabled =
                     settings != null &&
-                    !excludeFilters.Match(new PaymentMethodId(cryptoCode, MoneroPaymentType.Instance)),
+                    !excludeFilters.Match(new PaymentMethodId(cryptoCode, PiratePaymentType.Instance)),
                 Summary = summary,
                 CryptoCode = cryptoCode,
                 AccountIndex = settings?.AccountIndex ?? accountsResponse?.SubaddressAccounts?.FirstOrDefault()?.AccountIndex ?? 0,
@@ -114,25 +114,25 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
         }
 
         [HttpGet("{cryptoCode}")]
-        public async Task<IActionResult> GetStoreMoneroLikePaymentMethod(string cryptoCode)
+        public async Task<IActionResult> GetStorePirateLikePaymentMethod(string cryptoCode)
         {
             cryptoCode = cryptoCode.ToUpperInvariant();
-            if (!_MoneroLikeConfiguration.MoneroLikeConfigurationItems.ContainsKey(cryptoCode))
+            if (!_PirateLikeConfiguration.PirateLikeConfigurationItems.ContainsKey(cryptoCode))
             {
                 return NotFound();
             }
 
-            var vm = GetMoneroLikePaymentMethodViewModel(StoreData.GetSupportedPaymentMethods(_BtcPayNetworkProvider)
-                    .OfType<MoneroSupportedPaymentMethod>(), cryptoCode,
+            var vm = GetPirateLikePaymentMethodViewModel(StoreData.GetSupportedPaymentMethods(_BtcPayNetworkProvider)
+                    .OfType<PirateSupportedPaymentMethod>(), cryptoCode,
                 StoreData.GetStoreBlob().GetExcludedPaymentMethods(), await GetAccounts(cryptoCode));
-            return View(nameof(GetStoreMoneroLikePaymentMethod), vm);
+            return View(nameof(GetStorePirateLikePaymentMethod), vm);
         }
 
         [HttpPost("{cryptoCode}")]
-        public async Task<IActionResult> GetStoreMoneroLikePaymentMethod(MoneroLikePaymentMethodViewModel viewModel, string command, string cryptoCode)
+        public async Task<IActionResult> GetStorePirateLikePaymentMethod(PirateLikePaymentMethodViewModel viewModel, string command, string cryptoCode)
         {
             cryptoCode = cryptoCode.ToUpperInvariant();
-            if (!_MoneroLikeConfiguration.MoneroLikeConfigurationItems.TryGetValue(cryptoCode,
+            if (!_PirateLikeConfiguration.PirateLikeConfigurationItems.TryGetValue(cryptoCode,
                 out var configurationItem))
             {
                 return NotFound();
@@ -142,7 +142,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
             {
                 try
                 {
-                    var newAccount = await _MoneroRpcProvider.WalletRpcClients[cryptoCode].SendCommandAsync<CreateAccountRequest, CreateAccountResponse>("create_account", new CreateAccountRequest()
+                    var newAccount = await _PirateRpcProvider.WalletRpcClients[cryptoCode].SendCommandAsync<CreateAccountRequest, CreateAccountResponse>("create_account", new CreateAccountRequest()
                     {
                         Label = viewModel.NewAccountLabel
                     });
@@ -170,7 +170,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
 
                 if (valid)
                 {
-                    if (_MoneroRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary))
+                    if (_PirateRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary))
                     {
                         if (summary.WalletAvailable)
                         {
@@ -179,7 +179,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
                                 Severity = StatusMessageModel.StatusSeverity.Error,
                                 Message = $"There is already an active wallet configured for {cryptoCode}. Replacing it would break any existing invoices!"
                             });
-                            return RedirectToAction(nameof(GetStoreMoneroLikePaymentMethod),
+                            return RedirectToAction(nameof(GetStorePirateLikePaymentMethod),
                                 new { cryptoCode });
                         }
                     }
@@ -224,7 +224,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
                         }
                     }
 
-                    return RedirectToAction(nameof(GetStoreMoneroLikePaymentMethod), new
+                    return RedirectToAction(nameof(GetStorePirateLikePaymentMethod), new
                     {
                         cryptoCode,
                         StatusMessage = "View-only wallet files uploaded. If they are valid the wallet will soon become available."
@@ -236,9 +236,9 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
             if (!ModelState.IsValid)
             {
 
-                var vm = GetMoneroLikePaymentMethodViewModel(StoreData
+                var vm = GetPirateLikePaymentMethodViewModel(StoreData
                         .GetSupportedPaymentMethods(_BtcPayNetworkProvider)
-                        .OfType<MoneroSupportedPaymentMethod>(), cryptoCode,
+                        .OfType<PirateSupportedPaymentMethod>(), cryptoCode,
                     StoreData.GetStoreBlob().GetExcludedPaymentMethods(), await GetAccounts(cryptoCode));
 
                 vm.Enabled = viewModel.Enabled;
@@ -249,16 +249,16 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
 
             var storeData = StoreData;
             var blob = storeData.GetStoreBlob();
-            storeData.SetSupportedPaymentMethod(new MoneroSupportedPaymentMethod()
+            storeData.SetSupportedPaymentMethod(new PirateSupportedPaymentMethod()
             {
                 AccountIndex = viewModel.AccountIndex,
                 CryptoCode = viewModel.CryptoCode
             });
 
-            blob.SetExcluded(new PaymentMethodId(viewModel.CryptoCode, MoneroPaymentType.Instance), !viewModel.Enabled);
+            blob.SetExcluded(new PaymentMethodId(viewModel.CryptoCode, PiratePaymentType.Instance), !viewModel.Enabled);
             storeData.SetStoreBlob(blob);
             await _StoreRepository.UpdateStore(storeData);
-            return RedirectToAction("GetStoreMoneroLikePaymentMethods",
+            return RedirectToAction("GetStorePirateLikePaymentMethods",
                 new { StatusMessage = $"{cryptoCode} settings updated successfully", storeId = StoreData.Id });
         }
 
@@ -286,14 +286,14 @@ namespace BTCPayServer.Services.Altcoins.Monero.UI
             process.WaitForExit();
         }
 
-        public class MoneroLikePaymentMethodListViewModel
+        public class PirateLikePaymentMethodListViewModel
         {
-            public IEnumerable<MoneroLikePaymentMethodViewModel> Items { get; set; }
+            public IEnumerable<PirateLikePaymentMethodViewModel> Items { get; set; }
         }
 
-        public class MoneroLikePaymentMethodViewModel
+        public class PirateLikePaymentMethodViewModel
         {
-            public MoneroRPCProvider.MoneroLikeSummary Summary { get; set; }
+            public PirateRPCProvider.PirateLikeSummary Summary { get; set; }
             public string CryptoCode { get; set; }
             public string NewAccountLabel { get; set; }
             public long AccountIndex { get; set; }

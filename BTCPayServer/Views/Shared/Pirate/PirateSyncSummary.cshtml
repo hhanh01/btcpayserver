@@ -1,10 +1,10 @@
-@using BTCPayServer.Services.Altcoins.Monero.Services
-@inject MoneroRPCProvider MoneroRpcProvider
+@using BTCPayServer.Services.Altcoins.Pirate.Services
+@inject PirateRPCProvider PirateRpcProvider
 @inject SignInManager<ApplicationUser> SignInManager;
 
-@if (SignInManager.IsSignedIn(User) && User.IsInRole(Roles.ServerAdmin) && MoneroRpcProvider.Summaries.Any())
+@if (SignInManager.IsSignedIn(User) && User.IsInRole(Roles.ServerAdmin) && PirateRpcProvider.Summaries.Any())
 {
-    @foreach (var summary in MoneroRpcProvider.Summaries)
+    @foreach (var summary in PirateRpcProvider.Summaries)
     {
         @if (summary.Value != null)
         {

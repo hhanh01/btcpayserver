@@ -4,16 +4,16 @@ namespace BTCPayServer
 {
     public partial class BTCPayNetworkProvider
     {
-        public void InitMonero()
+        public void InitPirate()
         {
-            Add(new MoneroLikeSpecificBtcPayNetwork()
+            Add(new PirateLikeSpecificBtcPayNetwork()
             {
                 CryptoCode = "XMR",
-                DisplayName = "Monero",
+                DisplayName = "Pirate",
                 Divisibility = 12,
                 BlockExplorerLink =
                     NetworkType == ChainName.Mainnet
-                        ? "https://www.exploremonero.com/transaction/{0}"
+                        ? "https://www.exploremonero.com/transaction/{0}" // TODO HHH
                         : "https://testnet.xmrchain.net/tx/{0}",
                 DefaultRateRules = new[]
                 {

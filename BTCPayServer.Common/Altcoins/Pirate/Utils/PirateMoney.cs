@@ -1,20 +1,20 @@
 using System.Globalization;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Utils
+namespace BTCPayServer.Services.Altcoins.Pirate.Utils
 {
-    public class MoneroMoney
+    public class PirateMoney
     {
-        public static decimal Convert(long piconero)
+        public static decimal Convert(long zats)
         {
-            var amt = piconero.ToString(CultureInfo.InvariantCulture).PadLeft(12, '0');
-            amt = amt.Length == 12 ? $"0.{amt}" : amt.Insert(amt.Length - 12, ".");
+            var amt = zats.ToString(CultureInfo.InvariantCulture).PadLeft(10, '0');
+            amt = amt.Length == 10 ? $"0.{amt}" : amt.Insert(amt.Length - 10, ".");
 
             return decimal.Parse(amt, CultureInfo.InvariantCulture);
         }
 
-        public static long Convert(decimal monero)
+        public static long Convert(decimal arrr)
         {
-            return System.Convert.ToInt64(monero * 1000000000000);
+            return System.Convert.ToInt64(arrr * 10000000000);
         }
     }
 }

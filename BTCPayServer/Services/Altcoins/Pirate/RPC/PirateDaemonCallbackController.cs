@@ -2,22 +2,22 @@
 using BTCPayServer.Filters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BTCPayServer.Services.Altcoins.Monero.RPC
+namespace BTCPayServer.Services.Altcoins.Pirate.RPC
 {
     [Route("[controller]")]
     [OnlyIfSupportAttribute("XMR")]
-    public class MoneroLikeDaemonCallbackController : Controller
+    public class PirateLikeDaemonCallbackController : Controller
     {
         private readonly EventAggregator _eventAggregator;
 
-        public MoneroLikeDaemonCallbackController(EventAggregator eventAggregator)
+        public PirateLikeDaemonCallbackController(EventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
         }
         [HttpGet("block")]
         public IActionResult OnBlockNotify(string hash, string cryptoCode)
         {
-            _eventAggregator.Publish(new MoneroEvent()
+            _eventAggregator.Publish(new PirateEvent()
             {
                 BlockHash = hash,
                 CryptoCode = cryptoCode.ToUpperInvariant()
@@ -27,7 +27,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.RPC
         [HttpGet("tx")]
         public IActionResult OnTransactionNotify(string hash, string cryptoCode)
         {
-            _eventAggregator.Publish(new MoneroEvent()
+            _eventAggregator.Publish(new PirateEvent()
             {
                 TransactionHash = hash,
                 CryptoCode = cryptoCode.ToUpperInvariant()

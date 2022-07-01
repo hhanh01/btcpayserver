@@ -1,10 +1,10 @@
 @using BTCPayServer.Views.Stores
 @using BTCPayServer.Abstractions.Extensions
-@model BTCPayServer.Services.Altcoins.Monero.UI.UIMoneroLikeStoreController.MoneroLikePaymentMethodListViewModel
+@model BTCPayServer.Services.Altcoins.Pirate.UI.UIPirateLikeStoreController.PirateLikePaymentMethodListViewModel
 
 @{
     Layout = "../Shared/_NavLayout.cshtml";
-    ViewData.SetActivePage(StoreNavPages.OnchainSettings, "Monero Settings");
+    ViewData.SetActivePage(StoreNavPages.OnchainSettings, "Pirate Settings");
     ViewData["NavPartialName"] = "../UIStores/_Nav";
 }
 
@@ -38,7 +38,7 @@
                             }
                         </td>
                         <td class="text-right">
-                            <a id="Modify" asp-action="GetStoreMoneroLikePaymentMethod"
+                            <a id="Modify" asp-action="GetStorePirateLikePaymentMethod"
                                asp-route-storeId="@Context.GetRouteValue("storeId")"
                                asp-route-cryptoCode="@item.CryptoCode">
                                 Modify

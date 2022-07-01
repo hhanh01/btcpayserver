@@ -1,12 +1,12 @@
 #if ALTCOINS
 using BTCPayServer.Client.Models;
 using BTCPayServer.Payments;
-using BTCPayServer.Services.Altcoins.Monero.Utils;
+using BTCPayServer.Services.Altcoins.Pirate.Utils;
 using BTCPayServer.Services.Invoices;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Payments
+namespace BTCPayServer.Services.Altcoins.Pirate.Payments
 {
-    public class MoneroLikePaymentData : CryptoPaymentData
+    public class PirateLikePaymentData : CryptoPaymentData
     {
         public long Amount { get; set; }
         public string Address { get; set; }
@@ -30,12 +30,12 @@ namespace BTCPayServer.Services.Altcoins.Monero.Payments
 
         public decimal GetValue()
         {
-            return MoneroMoney.Convert(Amount);
+            return PirateMoney.Convert(Amount);
         }
 
         public bool PaymentCompleted(PaymentEntity entity)
         {
-            return ConfirmationCount >= (Network as MoneroLikeSpecificBtcPayNetwork).MaxTrackedConfirmation;
+            return ConfirmationCount >= (Network as PirateLikeSpecificBtcPayNetwork).MaxTrackedConfirmation;
         }
 
         public bool PaymentConfirmed(PaymentEntity entity, SpeedPolicy speedPolicy)
@@ -57,7 +57,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.Payments
 
         public PaymentType GetPaymentType()
         {
-            return MoneroPaymentType.Instance;
+            return PiratePaymentType.Instance;
         }
 
         public string GetDestination()

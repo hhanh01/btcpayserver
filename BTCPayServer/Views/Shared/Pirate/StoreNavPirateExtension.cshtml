@@ -1,0 +1,12 @@
+@using BTCPayServer.Services.Altcoins.Pirate.Configuration
+@using BTCPayServer.Services.Altcoins.Pirate.UI
+@inject SignInManager<ApplicationUser> SignInManager;
+@inject PirateLikeConfiguration PirateLikeConfiguration;
+@{
+    var controller = ViewContext.RouteData.Values["Controller"].ToString();
+    var isPirate = controller.Equals(nameof(UIPirateLikeStoreController), StringComparison.InvariantCultureIgnoreCase);
+}
+@if (SignInManager.IsSignedIn(User) && User.IsInRole(Roles.ServerAdmin) && PirateLikeConfiguration.PirateLikeConfigurationItems.Any())
+{
+    <a class="nav-link @(isPirate ? "active" : string.Empty)" asp-route-storeId="@this.Context.GetRouteValue("storeId")" asp-action="GetStorePirateLikePaymentMethods" asp-controller="UIPirateLikeStore">Pirate</a>
+}

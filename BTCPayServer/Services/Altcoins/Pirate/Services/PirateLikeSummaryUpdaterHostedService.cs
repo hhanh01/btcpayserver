@@ -3,47 +3,47 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using BTCPayServer.Logging;
-using BTCPayServer.Services.Altcoins.Monero.Configuration;
+using BTCPayServer.Services.Altcoins.Pirate.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BTCPayServer.Services.Altcoins.Monero.Services
+namespace BTCPayServer.Services.Altcoins.Pirate.Services
 {
-    public class MoneroLikeSummaryUpdaterHostedService : IHostedService
+    public class PirateLikeSummaryUpdaterHostedService : IHostedService
     {
-        private readonly MoneroRPCProvider _MoneroRpcProvider;
-        private readonly MoneroLikeConfiguration _moneroLikeConfiguration;
+        private readonly PirateRPCProvider _PirateRpcProvider;
+        private readonly PirateLikeConfiguration _pirateLikeConfiguration;
 
         public Logs Logs { get; }
 
         private CancellationTokenSource _Cts;
-        public MoneroLikeSummaryUpdaterHostedService(MoneroRPCProvider moneroRpcProvider, MoneroLikeConfiguration moneroLikeConfiguration, Logs logs)
+        public PirateLikeSummaryUpdaterHostedService(PirateRPCProvider pirateRpcProvider, PirateLikeConfiguration pirateLikeConfiguration, Logs logs)
         {
-            _MoneroRpcProvider = moneroRpcProvider;
-            _moneroLikeConfiguration = moneroLikeConfiguration;
+            _PirateRpcProvider = pirateRpcProvider;
+            _pirateLikeConfiguration = pirateLikeConfiguration;
             Logs = logs;
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _Cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            foreach (var moneroLikeConfigurationItem in _moneroLikeConfiguration.MoneroLikeConfigurationItems)
+            foreach (var pirateLikeConfigurationItem in _pirateLikeConfiguration.PirateLikeConfigurationItems)
             {
-                _ = StartLoop(_Cts.Token, moneroLikeConfigurationItem.Key);
+                _ = StartLoop(_Cts.Token, pirateLikeConfigurationItem.Key);
             }
             return Task.CompletedTask;
         }
 
         private async Task StartLoop(CancellationToken cancellation, string cryptoCode)
         {
-            Logs.PayServer.LogInformation($"Starting listening Monero-like daemons ({cryptoCode})");
+            Logs.PayServer.LogInformation($"Starting listening Pirate-like daemons ({cryptoCode})");
             try
             {
                 while (!cancellation.IsCancellationRequested)
                 {
                     try
                     {
-                        await _MoneroRpcProvider.UpdateSummary(cryptoCode);
-                        if (_MoneroRpcProvider.IsAvailable(cryptoCode))
+                        await _PirateRpcProvider.UpdateSummary(cryptoCode);
+                        if (_PirateRpcProvider.IsAvailable(cryptoCode))
                         {
                             await Task.Delay(TimeSpan.FromMinutes(1), cancellation);
                         }
