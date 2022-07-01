@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace BTCPayServer.Services.Altcoins.Monero.RPC
+namespace BTCPayServer.Services.Altcoins.Pirate.RPC
 {
     public class JsonRpcClient
     {
@@ -35,9 +35,9 @@ namespace BTCPayServer.Services.Altcoins.Monero.RPC
             var httpRequest = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(_address, "json_rpc"),
+                RequestUri = new Uri(_address, method),
                 Content = new StringContent(
-                    JsonConvert.SerializeObject(new JsonRpcCommand<TRequest>(method, data), jsonSerializer),
+                    JsonConvert.SerializeObject(data, jsonSerializer),
                     Encoding.UTF8, "application/json")
             };
             httpRequest.Headers.Accept.Clear();
@@ -49,10 +49,10 @@ namespace BTCPayServer.Services.Altcoins.Monero.RPC
 
             var rawJson = await rawResult.Content.ReadAsStringAsync();
             rawResult.EnsureSuccessStatusCode();
-            JsonRpcResult<TResponse> response;
+            TResponse response;
             try
             {
-                response = JsonConvert.DeserializeObject<JsonRpcResult<TResponse>>(rawJson, jsonSerializer);
+                response = JsonConvert.DeserializeObject<TResponse>(rawJson, jsonSerializer);
             }
             catch (Exception e)
             {
@@ -69,7 +69,7 @@ namespace BTCPayServer.Services.Altcoins.Monero.RPC
                 };
             }
 
-            return response.Result;
+            return response;
         }
 
         public class NoRequestModel
