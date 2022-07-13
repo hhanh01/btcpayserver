@@ -1273,6 +1273,13 @@
       "symbol":null,
       "crypto":true
    },
+    {
+        "name":"ARRR",
+        "code":"ARRR",
+        "divisibility":8,
+        "symbol":null,
+        "crypto":true
+    },
    {
       "name":"Htmlcoin",
       "code":"HTML",

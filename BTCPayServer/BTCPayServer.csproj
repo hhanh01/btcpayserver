@@ -41,8 +41,10 @@
     <Content Remove="Services\Altcoins\**\*" />
     <Content Remove="Views\UIMoneroLikeStore\**\*" />
     <Content Remove="Views\UIZcashLikeStore\**\*" />
+    <Content Remove="Views\UIPirateLikeStore\**\*" />
     <Content Remove="Views\Shared\Monero\**\*" />
     <Content Remove="Views\Shared\Zcash\**\*" />
+    <Content Remove="Views\Shared\Pirate\**\*" />
   </ItemGroup>
 
   <ItemGroup>

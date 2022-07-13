@@ -8,12 +8,12 @@ namespace BTCPayServer
         {
             Add(new PirateLikeSpecificBtcPayNetwork()
             {
-                CryptoCode = "XMR",
+                CryptoCode = "ARRR",
                 DisplayName = "Pirate",
                 Divisibility = 12,
                 BlockExplorerLink =
                     NetworkType == ChainName.Mainnet
-                        ? "https://www.exploremonero.com/transaction/{0}" // TODO HHH
+                        ? "https://www.exploremonero.com/transaction/{0}" // TODO HHH: Replace with ARRR block explorer
                         : "https://testnet.xmrchain.net/tx/{0}",
                 DefaultRateRules = new[]
                 {

@@ -48,13 +48,11 @@ namespace BTCPayServer.Services.Altcoins.Pirate.Payments
             var invoice = paymentMethod.ParentEntity;
             if (!(preparePaymentObject is Prepare piratePrepare))
                 throw new ArgumentException();
-            var feeRatePerKb = await piratePrepare.GetFeeRate;
             var address = await piratePrepare.ReserveAddress(invoice.Id);
 
-            var feeRatePerByte = feeRatePerKb.Fee / 1024;
             return new PirateLikeOnChainPaymentMethodDetails()
             {
-                NextNetworkFee = PirateMoney.Convert(feeRatePerByte * 100),
+                NextNetworkFee = PirateMoney.Convert(1000),
                 AccountIndex = supportedPaymentMethod.AccountIndex,
                 AddressIndex = address.AddressIndex,
                 DepositAddress = address.Address,
@@ -71,14 +69,12 @@ namespace BTCPayServer.Services.Altcoins.Pirate.Payments
             var daemonClient = _pirateRpcProvider.DaemonRpcClients[supportedPaymentMethod.CryptoCode];
             return new Prepare()
             {
-                GetFeeRate = daemonClient.SendCommandAsync<GetFeeEstimateRequest, GetFeeEstimateResponse>("get_fee_estimate", new GetFeeEstimateRequest()),
                 ReserveAddress = s => walletClient.SendCommandAsync<CreateAddressRequest, CreateAddressResponse>("create_address", new CreateAddressRequest() { Label = $"btcpay invoice #{s}", AccountIndex = supportedPaymentMethod.AccountIndex })
             };
         }
 
         class Prepare
         {
-            public Task<GetFeeEstimateResponse> GetFeeRate;
             public Func<string, Task<CreateAddressResponse>> ReserveAddress;
         }
 

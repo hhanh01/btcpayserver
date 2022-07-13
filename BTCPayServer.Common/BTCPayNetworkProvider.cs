@@ -56,6 +56,7 @@ namespace BTCPayServer
             InitViacoin();
             InitMonero();
             InitZcash();
+            InitPirate();
             InitChaincoin();
             // InitArgoneum();//their rate source is down 9/15/20.
             InitMonetaryUnit();

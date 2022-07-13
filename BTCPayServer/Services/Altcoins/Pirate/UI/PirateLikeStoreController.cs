@@ -78,8 +78,7 @@ namespace BTCPayServer.Services.Altcoins.Pirate.UI
             {
                 if (_PirateRpcProvider.Summaries.TryGetValue(cryptoCode, out var summary) && summary.WalletAvailable)
                 {
-
-                    return _PirateRpcProvider.WalletRpcClients[cryptoCode].SendCommandAsync<GetAccountsRequest, GetAccountsResponse>("get_accounts", new GetAccountsRequest());
+                    return _PirateRpcProvider.WalletRpcClients[cryptoCode].SendCommandAsync<Empty, GetAccountsResponse>("get_accounts", new Empty());
                 }
             }
             catch { }

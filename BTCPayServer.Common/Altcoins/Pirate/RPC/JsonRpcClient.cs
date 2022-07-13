@@ -40,10 +40,6 @@ namespace BTCPayServer.Services.Altcoins.Pirate.RPC
                     JsonConvert.SerializeObject(data, jsonSerializer),
                     Encoding.UTF8, "application/json")
             };
-            httpRequest.Headers.Accept.Clear();
-            httpRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.Default.GetBytes($"{_username}:{_password}")));
 
             var rawResult = await _httpClient.SendAsync(httpRequest, cts);
 
@@ -59,14 +55,6 @@ namespace BTCPayServer.Services.Altcoins.Pirate.RPC
                 Console.WriteLine(e.Message);
                 Console.WriteLine(rawJson);
                 throw;
-            }
-
-            if (response.Error != null)
-            {
-                throw new JsonRpcApiException()
-                {
-                    Error = response.Error
-                };
             }
 
             return response;

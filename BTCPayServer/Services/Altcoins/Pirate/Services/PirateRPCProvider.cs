@@ -61,10 +61,8 @@ namespace BTCPayServer.Services.Altcoins.Pirate.Services
                 var daemonResult =
                     await daemonRpcClient.SendCommandAsync<JsonRpcClient.NoRequestModel, SyncInfoResponse>("sync_info",
                         JsonRpcClient.NoRequestModel.Instance);
-                summary.TargetHeight = daemonResult.TargetHeight.GetValueOrDefault(0);
                 summary.CurrentHeight = daemonResult.Height;
-                summary.TargetHeight = summary.TargetHeight == 0 ? summary.CurrentHeight : summary.TargetHeight;
-                summary.Synced = daemonResult.Height >= summary.TargetHeight && summary.CurrentHeight > 0;
+                summary.Synced = true; // The Pirate lightwalletd server does not show its synced status
                 summary.UpdatedAt = DateTime.UtcNow;
                 summary.DaemonAvailable = true;
             }
@@ -110,7 +108,6 @@ namespace BTCPayServer.Services.Altcoins.Pirate.Services
             public bool Synced { get; set; }
             public long CurrentHeight { get; set; }
             public long WalletHeight { get; set; }
-            public long TargetHeight { get; set; }
             public DateTime UpdatedAt { get; set; }
             public bool DaemonAvailable { get; set; }
             public bool WalletAvailable { get; set; }
