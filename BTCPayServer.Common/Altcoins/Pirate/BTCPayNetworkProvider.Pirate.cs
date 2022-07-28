@@ -10,7 +10,7 @@ namespace BTCPayServer
             {
                 CryptoCode = "ARRR",
                 DisplayName = "Pirate",
-                Divisibility = 12,
+                Divisibility = 8,
                 BlockExplorerLink =
                     NetworkType == ChainName.Mainnet
                         ? "https://www.exploremonero.com/transaction/{0}" // TODO HHH: Replace with ARRR block explorer
@@ -20,8 +20,8 @@ namespace BTCPayServer
                     "XMR_X = XMR_BTC * BTC_X",
                     "XMR_BTC = kraken(XMR_BTC)"
                 },
-                CryptoImagePath = "/imlegacy/monero.svg",
-                UriScheme = "monero"
+                CryptoImagePath = "/imlegacy/pirate.png",
+                UriScheme = "Pirate"
             });
         }
     }

@@ -18,7 +18,6 @@
                     <li class="list-group-item">Node available: @Model.Summary.DaemonAvailable</li>
                     <li class="list-group-item">Wallet available: @Model.Summary.WalletAvailable (@(Model.WalletFileFound ? "Wallet file present" : "Wallet file not found"))</li>
                     <li class="list-group-item">Last updated: @Model.Summary.UpdatedAt</li>
-                    <li class="list-group-item">Synced: @Model.Summary.Synced (@Model.Summary.CurrentHeight / @Model.Summary.TargetHeight)</li>
                 </ul>
             </div>
         }

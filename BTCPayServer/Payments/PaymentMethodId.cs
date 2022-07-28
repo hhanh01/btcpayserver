@@ -112,7 +112,7 @@ namespace BTCPayServer.Payments
             if (parts[0].ToUpperInvariant() == "ZEC")
                 type = PaymentTypes.ZcashLike;
             if (parts[0].ToUpperInvariant() == "ARRR")
-                type = PaymentTypes.ZcashLike;
+                type = PaymentTypes.PirateLike;
 #endif
             if (parts.Length == 2)
             {

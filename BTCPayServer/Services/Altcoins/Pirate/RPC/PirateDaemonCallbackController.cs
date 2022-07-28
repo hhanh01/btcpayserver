@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BTCPayServer.Services.Altcoins.Pirate.RPC
 {
     [Route("[controller]")]
-    [OnlyIfSupportAttribute("XMR")]
+    [OnlyIfSupportAttribute("ARRR")]
     public class PirateLikeDaemonCallbackController : Controller
     {
         private readonly EventAggregator _eventAggregator;
